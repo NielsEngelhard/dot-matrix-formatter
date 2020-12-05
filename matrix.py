@@ -13,13 +13,23 @@ class PushButton(QPushButton):
         self.setStyleSheet("background-color: grey")
 
 
-class GenerateButton(QPushButton):
+class GenerateHorizontalPatternButton(QPushButton):
     def __init__(self, text, parent=None):
-        super(GenerateButton, self).__init__(text, parent)
+        super(GenerateHorizontalPatternButton, self).__init__(text, parent)
         self.setText(text)
         self.setMinimumSize(QSize(50, 50))
         self.setMaximumSize(QSize(50, 50))
-        self.setText("GO")
+        self.setText("HOR")
+        self.setStyleSheet("background-color: orange")
+
+
+class GenerateVerticalPatternButton(QPushButton):
+    def __init__(self, text, parent=None):
+        super(GenerateVerticalPatternButton, self).__init__(text, parent)
+        self.setText(text)
+        self.setMinimumSize(QSize(50, 50))
+        self.setMaximumSize(QSize(50, 50))
+        self.setText("VER")
         self.setStyleSheet("background-color: orange")
 
 
@@ -73,14 +83,19 @@ class MyWindow(QMainWindow):
                 i += 1
                 if i == len_list: break
 
-        # create button
-        createButton = GenerateButton('Generate button', self);
-        self.layout.addWidget(createButton, 1, 10)
-        createButton.clicked.connect(partial(self.createButtonClicked, createButton))
+        # create horizontal button
+        horButton = GenerateHorizontalPatternButton('Hori button', self)
+        self.layout.addWidget(horButton, 1, 10)
+        horButton.clicked.connect(partial(self.horizontalButtonClicked, horButton))
+
+        # create vertical button
+        verButton = GenerateVerticalPatternButton('Verti button', self)
+        self.layout.addWidget(verButton, 1, 11)
+        verButton.clicked.connect(partial(self.verticalButtonClicked, verButton))
 
         # clear button
-        clearButton = ClearButton('Clear button', self);
-        self.layout.addWidget(clearButton, 1, 11)
+        clearButton = ClearButton('Clear button', self)
+        self.layout.addWidget(clearButton, 1, 12)
         clearButton.clicked.connect(partial(self.clearButtonClicked, clearButton))
 
     def matrixButtonClick(self, button, row, column):
@@ -93,16 +108,90 @@ class MyWindow(QMainWindow):
             button.setText("0")
             self.valueHolder[row][column] = 0
 
-    def createButtonClicked(self, button):
+    # under each other
+    def verticalButtonClicked(self, button):
+        patternToReverse = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+
+        finalPattern = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+
+        for row in range(8):
+            for column in range(8):
+                patternToReverse[row][column] = self.valueHolder[column][row]
+
+        for horizontal in range(8):
+            for vertical in range(8):
+                finalPattern[horizontal][7 - vertical] = patternToReverse[horizontal][vertical]
+
         print("byte pattern[] = {")
         for row in range(8):
-            rowToPrint = "B"
+            rowToPrint = "  B"
             for column in range(8):
-                rowToPrint = rowToPrint + str(self.valueHolder[column][row])
-            if row != 8:
+                rowToPrint = rowToPrint + str(finalPattern[row][column])
+            if row != 7:
                 rowToPrint = rowToPrint + ","
             print(rowToPrint)
         print("};")
+
+    # next to each other
+    def horizontalButtonClicked(self, button):
+
+        patternToReverse = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+
+        finalPattern = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+
+        for row in range(8):
+            for column in range(8):
+                patternToReverse[row][column] = self.valueHolder[column][row]
+
+        for horizontal in range(8):
+            for vertical in range(8):
+                finalPattern[horizontal][7 - vertical] = patternToReverse[horizontal][vertical]
+
+        patternToPrint = "{"
+        for row in range(8):
+            patternToPrint = patternToPrint + "B"
+            for column in range(8):
+                patternToPrint = patternToPrint + str(finalPattern[row][column])
+            if row != 7:
+                patternToPrint = patternToPrint + ", "
+        patternToPrint = patternToPrint + "}"
+        print(patternToPrint)
 
     def clearButtonClicked(self, button):
         print("TO DO")
